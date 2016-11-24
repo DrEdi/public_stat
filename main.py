@@ -92,6 +92,7 @@ class VkInfo:
                 ws.write(index, 5, followers[user['id']]['likedByPeople'])
                 index += 1
             user_offset += 1000
+            time.sleep(1)
         wb.save('xl_rec.xls')
 
     def __get_group_count(self, owner_id):
