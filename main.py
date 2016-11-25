@@ -1,4 +1,6 @@
 import requests, time, xlwt
+
+# How to get token see README.md
 token = ''
 public_id = ''
 
@@ -23,6 +25,8 @@ class VkInfo:
                     try:
                         comments = self.__get_post_comments(owner_id, post['id'], comment_offset)
                     except Exception:
+                        # if we got Exception that means we trid to get so much responses from server
+                        # just wait for 1 second and server give us ordinagy response                        
                         time.sleep(1)
                         comments = self.__get_post_comments(owner_id, post['id'], comment_offset)
                     comment_offset += 100
@@ -39,8 +43,13 @@ class VkInfo:
                                 'published': 0,
                                 'likedByPeople': comment['likes']['count']
                             }
+                    # We must use sleep because of you have weak app server can give you only 3 responses
+                    # by 1 second. Python works much more fater, so we have to wait a bit
                     time.sleep(0.2)
                 try:
+                    # This point is a bit curious
+                    # Only if post were posted wih sign, it'll have a dict 'signer_id'
+                    # if not, we could get an exeption
                     print(post['signer_id'])
                     if post['signer_id'] in followers:
                         followers[post['signer_id']]['published'] += 1
