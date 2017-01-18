@@ -1,4 +1,7 @@
-import requests, time, xlwt
+"""VKAPI. Author: DrEdi."""
+import requests
+import time
+import xlwt
 
 # How to get token see README.md
 token = ''
@@ -6,11 +9,14 @@ public_id = ''
 
 
 class VkInfo:
+    """Entity for accsess to information with VkAPI."""
 
     def __init__(self, token):
+        """Set up token for accsess to some type of info."""
         self.__token = token
 
     def get_public_stat(self, owner_id):
+        """Get and then write info about you users activity."""
         followers = self.__get_user_list(owner_id)
         wall_count = self.__get_wall_count(owner_id)
         wall_offset = 0
@@ -26,7 +32,7 @@ class VkInfo:
                         comments = self.__get_post_comments(owner_id, post['id'], comment_offset)
                     except Exception:
                         # if we got Exception that means we trid to get so much responses from server
-                        # just wait for 1 second and server give us ordinagy response                        
+                        # just wait for 1 second and server give us ordinagy response
                         time.sleep(1)
                         comments = self.__get_post_comments(owner_id, post['id'], comment_offset)
                     comment_offset += 100
@@ -143,7 +149,7 @@ class VkInfo:
             user_offset += 1000
         return follower_list
 
-    def __get_wall(self,owner_id, count=10, offset=0):
+    def __get_wall(self, owner_id, count=10, offset=0):
         wall_get = requests.get('https://api.vk.com/method/{method}'.format(method='wall.get'), params={
             'owner_id': owner_id,
             'count': 100,
@@ -152,7 +158,7 @@ class VkInfo:
             'v': '5.38'}).json()['response']['items']
         return wall_get
 
-    def __get_post_comments(self,owner_id, post_id, offset=0):
+    def __get_post_comments(self, owner_id, post_id, offset=0):
         post_get = requests.get('https://api.vk.com/method/{method}'.format(method='wall.getComments'), params={
             'owner_id': owner_id,
             'post_id': post_id,
@@ -169,6 +175,7 @@ class VkInfo:
             'user_ids': str(user_ids).replace('[', '').replace(']', ''),
             'v': '5.38'}).json()['response']
         return user_info
+
 
 info = VkInfo(token)
 print(info.get_public_stat(public_id))
